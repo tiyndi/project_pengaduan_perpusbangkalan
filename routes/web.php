@@ -18,16 +18,18 @@ use App\Http\Controllers\Admin\UserController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Autentikasi
+// Autentikasi (dengan Rate Limiting & Proteksi Anti Brute-Force)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1'); // max 5 percobaan per menit
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1'); // max 5 pendaftaran per menit
 
-    // Google Sign-In & OAuth
+    // Google Sign-In & OAuth 2.0
     Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
-    Route::post('/auth/google/signin', [AuthController::class, 'processGoogleSignIn'])->name('auth.google.signin');
+    Route::post('/auth/google/signin', [AuthController::class, 'processGoogleSignIn'])
+        ->middleware('throttle:10,1')
+        ->name('auth.google.signin');
     Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 });
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

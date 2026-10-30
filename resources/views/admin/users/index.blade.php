@@ -90,7 +90,7 @@
                             <td>
                                 <div style="display: flex; align-items: center; gap: 12px;">
                                     @if($u->avatar_url)
-                                        <img src="{{ $u->avatar_url }}" alt="{{ $u->name }}" style="width: 38px; height: 38px; border-radius: 10px; object-fit: cover; border: 1px solid #e2e8f0;">
+                                        <img src="{{ $u->avatar_url }}" alt="{{ $u->name }}" style="width: 38px; height: 38px; border-radius: 10px; object-fit: cover; border: 1px solid #e2e8f0;" referrerpolicy="no-referrer">
                                     @else
                                         <div style="width: 38px; height: 38px; border-radius: 10px; background: #0e243f; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">
                                             {{ strtoupper(substr($u->name, 0, 1)) }}

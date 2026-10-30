@@ -38,12 +38,23 @@
                 @enderror
             </div>
 
-            <div style="margin-bottom: 24px;">
+            <div style="margin-bottom: 18px;">
                 <label for="google_name" style="display: block; font-size: 12.5px; font-weight: 600; color: #3c4043; margin-bottom: 6px;">
                     Nama Profil Google (Opsional)
                 </label>
                 <input type="text" id="google_name" name="name" value="{{ old('name', 'Liana Safitri') }}"
                        placeholder="Nama lengkap Anda di Google"
+                       style="width: 100%; padding: 11px 14px; border: 1px solid #dadce0; border-radius: 8px; font-size: 13.5px; color: #202124; font-family: inherit; outline: none; box-sizing: border-box;"
+                       onfocus="this.style.borderColor='#1a73e8'; this.style.boxShadow='0 0 0 2px rgba(26,115,232,0.2)';"
+                       onblur="this.style.borderColor='#dadce0'; this.style.boxShadow='none';">
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <label for="google_avatar" style="display: block; font-size: 12.5px; font-weight: 600; color: #3c4043; margin-bottom: 6px;">
+                    URL Foto Profil Google (Opsional)
+                </label>
+                <input type="url" id="google_avatar" name="avatar" value="{{ old('avatar', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80') }}"
+                       placeholder="https://..."
                        style="width: 100%; padding: 11px 14px; border: 1px solid #dadce0; border-radius: 8px; font-size: 13.5px; color: #202124; font-family: inherit; outline: none; box-sizing: border-box;"
                        onfocus="this.style.borderColor='#1a73e8'; this.style.boxShadow='0 0 0 2px rgba(26,115,232,0.2)';"
                        onblur="this.style.borderColor='#dadce0'; this.style.boxShadow='none';">

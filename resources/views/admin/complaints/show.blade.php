@@ -79,7 +79,7 @@
                         @foreach($complaint->responses as $resp)
                             <div class="audit-item">
                                 <div class="audit-avatar-wrap">
-                                    <img src="{{ $resp->user->avatar_url ?? 'https://ui-avatars.com/api/?name=Petugas' }}" alt="Avatar" class="audit-avatar">
+                                    <img src="{{ $resp->user->avatar_url ?? 'https://ui-avatars.com/api/?name=Petugas' }}" alt="Avatar" class="audit-avatar" referrerpolicy="no-referrer">
                                 </div>
                                 <div class="audit-content-box">
                                     <div class="audit-meta-header">

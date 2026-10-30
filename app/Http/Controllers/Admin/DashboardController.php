@@ -47,7 +47,17 @@ class DashboardController extends Controller
             ->orderBy('total', 'desc')
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'latestComplaints', 'chartData', 'categoryStats'));
+        // Koleksi bulanan terstruktur untuk view blade
+        $monthlyStats = collect($chartData['labels'] ?? [])->map(function ($label, $idx) use ($chartData) {
+            return (object) [
+                'month_name'  => $label,
+                'total'       => $chartData['totals'][$idx] ?? 0,
+                'resolved'    => $chartData['resolved'][$idx] ?? 0,
+                'in_progress' => $chartData['in_progress'][$idx] ?? 0,
+            ];
+        });
+
+        return view('admin.dashboard', compact('stats', 'latestComplaints', 'chartData', 'categoryStats', 'monthlyStats'));
     }
 
     private function getMonthlyChartData(): array
@@ -66,35 +76,26 @@ class DashboardController extends Controller
             '09' => 'Sep', '10' => 'Okt', '11' => 'Nov', '12' => 'Des'
         ];
 
-        // Total laporan masuk per bulan mulai Oktober 2026
-        $rawData = DB::table('complaints')
-            ->select(
-                DB::raw("TO_CHAR(created_at, 'YYYY-MM') as month"),
-                DB::raw("count(*) as total")
-            )
-            ->where('created_at', '>=', $startDate->toDateTimeString())
-            ->groupBy(DB::raw("TO_CHAR(created_at, 'YYYY-MM')"))
-            ->pluck('total', 'month');
+        // Format tanggal sesuai driver database (MySQL: DATE_FORMAT, SQLite: strftime, PostgreSQL: TO_CHAR)
+        $driver = DB::getDriverName();
+        $dateExpr = match ($driver) {
+            'sqlite' => "strftime('%Y-%m', created_at)",
+            'pgsql'  => "TO_CHAR(created_at, 'YYYY-MM')",
+            default  => "DATE_FORMAT(created_at, '%Y-%m')", // MySQL / MariaDB
+        };
 
-        // Laporan selesai per bulan
-        $resolvedData = DB::table('complaints')
+        // Menggabungkan query statistik bulanan menjadi satu query efisien
+        $monthlyRows = DB::table('complaints')
             ->select(
-                DB::raw("TO_CHAR(created_at, 'YYYY-MM') as month"),
-                DB::raw("sum(case when status = 'resolved' then 1 else 0 end) as resolved")
-            )
-            ->where('created_at', '>=', $startDate->toDateTimeString())
-            ->groupBy(DB::raw("TO_CHAR(created_at, 'YYYY-MM')"))
-            ->pluck('resolved', 'month');
-
-        // Laporan sedang diproses per bulan
-        $inProgressData = DB::table('complaints')
-            ->select(
-                DB::raw("TO_CHAR(created_at, 'YYYY-MM') as month"),
+                DB::raw("{$dateExpr} as month"),
+                DB::raw("count(*) as total"),
+                DB::raw("sum(case when status = 'resolved' then 1 else 0 end) as resolved"),
                 DB::raw("sum(case when status = 'in_progress' then 1 else 0 end) as in_progress")
             )
             ->where('created_at', '>=', $startDate->toDateTimeString())
-            ->groupBy(DB::raw("TO_CHAR(created_at, 'YYYY-MM')"))
-            ->pluck('in_progress', 'month');
+            ->groupBy(DB::raw($dateExpr))
+            ->get()
+            ->keyBy('month');
 
         return [
             'period'      => 'Okt 2026 – ' . ($bulanIndo[substr($months->last(), 5, 2)] ?? '') . ' ' . substr($months->last(), 0, 4),
@@ -103,9 +104,9 @@ class DashboardController extends Controller
                 $mn = substr($m, 5, 2);
                 return ($bulanIndo[$mn] ?? $mn) . ' ' . $y;
             })->values()->toArray(),
-            'totals'      => $months->map(fn($m) => (int) $rawData->get($m, 0))->values()->toArray(),
-            'resolved'    => $months->map(fn($m) => (int) $resolvedData->get($m, 0))->values()->toArray(),
-            'in_progress' => $months->map(fn($m) => (int) $inProgressData->get($m, 0))->values()->toArray(),
+            'totals'      => $months->map(fn($m) => (int) ($monthlyRows->get($m)->total ?? 0))->values()->toArray(),
+            'resolved'    => $months->map(fn($m) => (int) ($monthlyRows->get($m)->resolved ?? 0))->values()->toArray(),
+            'in_progress' => $months->map(fn($m) => (int) ($monthlyRows->get($m)->in_progress ?? 0))->values()->toArray(),
         ];
     }
 }

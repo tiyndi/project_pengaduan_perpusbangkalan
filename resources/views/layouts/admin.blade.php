@@ -6,17 +6,17 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Panel Petugas') — Pengaduan DISPUSIP Bangkalan</title>
 
-    <!-- Google Fonts: Plus Jakarta Sans -->
+    <!-- Google Fonts: Barlow Condensed (Display), Inter (Body), JetBrains Mono (Meta) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,700&family=Bebas+Neue&family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Admin Design System -->
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <!-- Admin & Main Design System -->
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 
     @stack('styles')
 </head>
@@ -32,7 +32,7 @@
             </div>
             <div>
                 <div class="sidebar-brand-title">DISPUSIP</div>
-                <div class="sidebar-brand-sub">Pengaduan Bangkalan</div>
+                <div class="sidebar-brand-sub">BANGKALAN &bull; ADMIN</div>
             </div>
         </a>
 
@@ -78,16 +78,16 @@
 
         <!-- Profil Pengguna Sedang Login -->
         <div class="sidebar-user-card">
-            <img src="{{ Auth::user()->avatar_url }}" alt="Avatar" class="sidebar-user-avatar">
+            <img src="{{ Auth::user()->avatar_url }}" alt="Avatar" class="sidebar-user-avatar" referrerpolicy="no-referrer">
             <div class="sidebar-user-info">
                 <span class="sidebar-user-name">{{ Auth::user()->name }}</span>
                 <span class="sidebar-user-role">
                     @if(Auth::user()->isAdmin())
-                        <span style="color: #fca5a5;"><i class="bi bi-shield-lock-fill"></i> Administrator</span>
+                        <span style="color: var(--color-voltage-yellow);"><i class="bi bi-shield-lock-fill"></i> ADMIN</span>
                     @elseif(Auth::user()->isPetugas())
-                        <span style="color: #93c5fd;"><i class="bi bi-person-badge-fill"></i> Petugas</span>
+                        <span style="color: var(--color-mint-chip);"><i class="bi bi-person-badge-fill"></i> PETUGAS</span>
                     @else
-                        <span style="color: #86efac;"><i class="bi bi-people-fill"></i> Masyarakat</span>
+                        <span>MASYARAKAT</span>
                     @endif
                 </span>
             </div>
@@ -110,7 +110,7 @@
             <div class="topbar-right">
                 <a href="{{ route('home') }}" class="btn-topbar-portal" target="_blank">
                     <i class="bi bi-box-arrow-up-right"></i>
-                    <span>Lihat Website Publik</span>
+                    <span>Portal Publik</span>
                 </a>
 
                 <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
@@ -125,7 +125,7 @@
 
         <!-- ALERTS -->
         @if(session('success') || session('error') || session('warning') || session('info'))
-            <div style="padding: 20px 28px 0;">
+            <div style="padding: 24px 36px 0;">
                 @if(session('success'))
                     <div class="gov-alert gov-alert-success">
                         <i class="bi bi-check-circle-fill"></i> {{ session('success') }}

@@ -71,15 +71,15 @@ class User extends Authenticatable
 
     public function getAvatarUrlAttribute(): string
     {
-        if ($this->avatar) {
+        if (!empty($this->avatar)) {
             if (str_starts_with($this->avatar, 'http://') || str_starts_with($this->avatar, 'https://')) {
                 return $this->avatar;
             }
             return asset('storage/' . $this->avatar);
         }
-        // Generate gravatar or default avatar
-        $hash = md5(strtolower(trim($this->email)));
-        return "https://www.gravatar.com/avatar/{$hash}?d=identicon&s=100";
+        
+        $name = urlencode($this->name ?: 'User');
+        return "https://ui-avatars.com/api/?name={$name}&background=000000&color=ffffff&size=128";
     }
 
     public function isMasyarakat(): bool

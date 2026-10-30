@@ -40,11 +40,12 @@ GOOGLE_REDIRECT_URI="${APP_URL}/auth/google/callback"
 
 ## Cara Menjalankan
 
-1. **Jalankan Apache & Database (PostgreSQL / MySQL)** di XAMPP / sistem Anda.
-2. **Migrasi Database**:
+1. **Jalankan Apache & Database (MySQL)** di XAMPP / Laragon / sistem Anda.
+2. **Migrasi Database & Seeder**:
    ```bash
-   php artisan migrate
+   php artisan migrate --seed
    ```
+   *(Atau impor file `database/database_mysql.sql` secara langsung ke MySQL/phpMyAdmin)*
 3. **Jalankan Server Lokal**:
    ```bash
    php artisan serve
